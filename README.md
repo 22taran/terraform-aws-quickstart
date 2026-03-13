@@ -1,18 +1,39 @@
-# Ready-to-Deploy AWS Infrastructure for Containerized Applications
+<div align="center">
 
-Production-grade AWS infrastructure as code for a full three-tier web application: SPA on S3+CloudFront, API on ECS Fargate, Database on RDS, Cognito auth, WAF, Monitoring using CloudWatch and CI/CD via GitHub, Bitbucket, or GitLab.
+# terraform-aws-quickstart
+
+### Production-Grade AWS Infrastructure for Containerized Applications
+
+[![Terraform](https://img.shields.io/badge/Terraform-%3E%3D1.10-844FBA?logo=terraform&logoColor=white)](https://www.terraform.io/)
+[![AWS Provider](https://img.shields.io/badge/AWS_Provider-~%3E6.0-FF9900?logo=amazonwebservices&logoColor=white)](https://registry.terraform.io/providers/hashicorp/aws/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?logo=opensourceinitiative&logoColor=white)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/22taran/terraform-aws-quickstart?style=flat&logo=github&color=181717)](https://github.com/22taran/terraform-aws-quickstart/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/22taran/terraform-aws-quickstart?style=flat&logo=github&color=181717)](https://github.com/22taran/terraform-aws-quickstart/network/members)
+
+SPA on **S3 + CloudFront** &bull; API on **ECS Fargate** &bull; Database on **RDS** &bull; Auth via **Cognito**
+WAF &bull; CloudWatch Monitoring &bull; Full **CI/CD Pipeline** via **CodePipeline + CodeBuild**
+Source from **GitHub**, **Bitbucket**, or **GitLab** via **CodeStar Connections**
 
 ---
+
+[Architecture](#architecture) &bull; [CI/CD Pipeline](#cicd-pipeline) &bull; [Quick Start](#quick-start) &bull; [Modules](#modules-reference) &bull; [Toggles](#dev-vs-prod-toggles)
+
+</div>
 
 ## Architecture
 
+<div align="center">
+
 ![AWS Infrastructure Diagram](Infrastructure.png)
 
-**Flow:** Users → CloudFront (optional WAF) → S3 (static) or ALB (API) → ECS Fargate → RDS. Cognito handles auth; CodeStar Connections (GitHub, Bitbucket, or GitLab) + CodeBuild/CodePipeline automate deployments.
+</div>
+
+**Flow:** Users &rarr; CloudFront (optional WAF) &rarr; S3 (static) &rarr; ALB (API) &rarr; ECS Fargate &rarr; RDS.
+Cognito handles auth; CodeStar Connections (GitHub, Bitbucket, or GitLab) + CodeBuild/CodePipeline automate deployments.
 
 ---
 
-## Benefits
+## Why This Stack?
 
 | Benefit | How This Stack Delivers It |
 |--------|----------------------------|
@@ -21,97 +42,183 @@ Production-grade AWS infrastructure as code for a full three-tier web applicatio
 | **Security** | Public/private/DB subnet isolation, SG per tier, WAF for CloudFront, Secrets Manager for DB credentials |
 | **Cost control** | Toggles for dev vs prod: single vs per-AZ NAT, optional flow logs, ALB logs, WAF, alarms |
 | **Operational simplicity** | Managed services (ECS Fargate, RDS, CloudFront), CloudWatch logs/alarms, SNS alerts |
-| **Automation** | VCS (GitHub/Bitbucket/GitLab) → CodeStar Connections → CodeBuild/CodePipeline → ECR + ECS + S3 + CloudFront |
+| **Automation** | VCS (GitHub/Bitbucket/GitLab) &rarr; CodeStar Connections &rarr; CodeBuild/CodePipeline &rarr; ECR + ECS + S3 + CloudFront |
 
 ---
 
 ## Problems This Solves
 
-- **Downtime & single points of failure** — Multi-AZ layout and optional Multi-AZ RDS reduce impact of AZ-level outages.
-- **Fluctuating traffic** — ALB, ECS Fargate, CloudFront, and optional autoscaling handle load changes.
-- **Web vulnerabilities** — Optional WAF protects CloudFront against common exploits.
-- **Manual ops** — Managed compute, DB, CDN, and CI/CD reduce manual provisioning and patching.
-- **Insecure credentials** — Secrets Manager holds DB password; ECS tasks pull it at runtime.
-- **Fragmented auth** — Cognito provides sign-up/sign-in; frontend gets tokens, backend verifies them.
+| Problem | Solution |
+|---------|----------|
+| Downtime & single points of failure | Multi-AZ layout and optional Multi-AZ RDS reduce impact of AZ-level outages |
+| Fluctuating traffic | ALB, ECS Fargate, CloudFront, and optional autoscaling handle load changes |
+| Web vulnerabilities | Optional WAF protects CloudFront against common exploits |
+| Manual ops | Managed compute, DB, CDN, and CI/CD reduce manual provisioning and patching |
+| Insecure credentials | Secrets Manager holds DB password; ECS tasks pull it at runtime |
+| Fragmented auth | Cognito provides sign-up/sign-in; frontend gets tokens, backend verifies them |
 
 ---
 
-## What’s Included
+## What's Included
 
-| Layer | Components |
-|-------|------------|
-| **Edge** | CloudFront, optional WAF |
-| **Static** | S3 bucket for SPA |
-| **Compute** | ALB, ECS Fargate (private subnets) |
-| **Data** | RDS in DB subnets, Secrets Manager |
-| **Auth** | Cognito user pool + app client |
-| **CI/CD** | CodeStar, CodeBuild, CodePipeline, ECR |
+| Layer | Components | Key Services |
+|-------|------------|--------------|
+| **Edge** | CDN + Protection | ![CloudFront](https://img.shields.io/badge/CloudFront-8C4FFF?logo=amazoncloudwatch&logoColor=white) ![WAF](https://img.shields.io/badge/WAF-DD344C?logo=awswaf&logoColor=white) |
+| **Static** | SPA Hosting | ![S3](https://img.shields.io/badge/S3-569A31?logo=amazons3&logoColor=white) |
+| **Compute** | Load Balancing + Containers | ![ALB](https://img.shields.io/badge/ALB-8C4FFF?logo=awselasticloadbalancing&logoColor=white) ![ECS](https://img.shields.io/badge/ECS_Fargate-FF9900?logo=amazonecs&logoColor=white) |
+| **Data** | Database + Secrets | ![RDS](https://img.shields.io/badge/RDS-527FFF?logo=amazonrds&logoColor=white) ![Secrets](https://img.shields.io/badge/Secrets_Manager-DD344C?logo=awssecretsmanager&logoColor=white) |
+| **Auth** | Identity | ![Cognito](https://img.shields.io/badge/Cognito-DD344C?logo=amazoncognito&logoColor=white) |
+| **CI/CD** | Build + Deploy | ![CodePipeline](https://img.shields.io/badge/CodePipeline-527FFF?logo=amazonaws&logoColor=white) ![CodeBuild](https://img.shields.io/badge/CodeBuild-527FFF?logo=amazonaws&logoColor=white) ![ECR](https://img.shields.io/badge/ECR-FF9900?logo=amazonaws&logoColor=white) |
 
 ---
 
 ## Repository Structure
 
 ```
-├── environments/dev/     # Dev environment (main.tf wires all modules)
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── outputs.tf
-│   └── terraform.tfvars.example
-└── modules/             # Reusable modules
-    ├── network, security_groups, alb, ecs, rds, cognito
-    ├── s3, cloudfront, waf, monitoring, ecr
-    └── codestar, iam, codebuild, codepipeline
+terraform-aws-quickstart/
+├── environments/
+│   └── dev/                        # Dev environment
+│       ├── main.tf                 # Wires all modules together
+│       ├── variables.tf
+│       ├── outputs.tf
+│       └── terraform.tfvars.example
+└── modules/                        # Reusable, composable modules
+    ├── network/                    # VPC, subnets, NAT, flow logs
+    ├── security_groups/            # ALB, ECS, RDS security groups
+    ├── alb/                        # Application Load Balancer
+    ├── ecs/                        # ECS Fargate cluster + service
+    ├── rds/                        # RDS + Secrets Manager
+    ├── cognito/                    # User pool + app client
+    ├── s3/                         # S3 bucket for SPA
+    ├── cloudfront/                 # CDN with S3 + ALB origins
+    ├── waf/                        # CloudFront WAF (us-east-1)
+    ├── monitoring/                 # CloudWatch alarms + SNS
+    ├── ecr/                        # Container registry
+    ├── iam/                        # IAM roles and policies
+    ├── codestar/                   # VCS connections
+    ├── codebuild/                  # Build projects
+    └── codepipeline/               # Deployment pipelines
 ```
+
+---
+
+## CI/CD Pipeline
+
+The infrastructure provisions a complete, end-to-end CI/CD pipeline for both frontend and backend using AWS-native services.
+
+### Pipeline Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          SOURCE (VCS)                                   │
+│   GitHub / Bitbucket / GitLab  ──►  CodeStar Connection                │
+└──────────────────────────────┬──────────────────────────────────────────┘
+                               │
+              ┌────────────────┴────────────────┐
+              ▼                                 ▼
+┌──────────────────────────┐     ┌──────────────────────────────────────┐
+│     FRONTEND PIPELINE    │     │         BACKEND PIPELINE             │
+│                          │     │                                      │
+│  CodeBuild               │     │  CodePipeline                        │
+│    ├─ npm install        │     │    │                                 │
+│    ├─ npm run build      │     │    ├─ Source ──► CodeStar            │
+│    └─ Sync to S3         │     │    ├─ Build  ──► CodeBuild (Docker)  │
+│                          │     │    └─ Deploy ──► ECS (Rolling)       │
+│  Post-build:             │     │                                      │
+│    └─ CloudFront         │     │  Build steps:                        │
+│       invalidation       │     │    ├─ Docker build                   │
+│                          │     │    ├─ Push to ECR                    │
+│                          │     │    └─ Generate imagedefinitions.json  │
+└──────────────────────────┘     └──────────────────────────────────────┘
+              │                                 │
+              ▼                                 ▼
+┌──────────────────────────┐     ┌──────────────────────────────────────┐
+│   S3  ──►  CloudFront    │     │   ECR  ──►  ECS Fargate (Fargate)   │
+│   (Static SPA)           │     │   (Containerized API)               │
+└──────────────────────────┘     └──────────────────────────────────────┘
+```
+
+### How It Works
+
+| Stage | Frontend | Backend |
+|-------|----------|---------|
+| **Source** | CodeStar pulls from VCS repo | CodePipeline Source stage via CodeStar |
+| **Build** | CodeBuild runs `npm install` + `npm run build` | CodeBuild builds Docker image, pushes to ECR |
+| **Deploy** | Artifacts synced to S3, CloudFront cache invalidated | CodePipeline Deploy stage updates ECS service (rolling) |
+| **Result** | SPA served globally via CloudFront | API containers running on ECS Fargate behind ALB |
+
+### Supported VCS Providers
+
+| Provider | Connection |
+|----------|------------|
+| ![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white&style=flat-square) | Via CodeStar Connection |
+| ![Bitbucket](https://img.shields.io/badge/Bitbucket-0052CC?logo=bitbucket&logoColor=white&style=flat-square) | Via CodeStar Connection |
+| ![GitLab](https://img.shields.io/badge/GitLab-FC6D26?logo=gitlab&logoColor=white&style=flat-square) | Via CodeStar Connection |
+
+> **Note:** After `terraform apply`, you must manually approve the CodeStar Connection in the AWS Console to authorize access to your VCS provider.
 
 ---
 
 ## Sample App: Atom Logistic
 
-The stack deploys a sample logistics app (frontend SPA + backend API) from your VCS (GitHub, Bitbucket, or GitLab):
+The stack deploys a sample logistics app (frontend SPA + backend API) using the CI/CD pipeline above.
 
-- **Frontend** → CodeBuild → S3 → CloudFront  
-- **Backend** → CodePipeline → CodeBuild (Docker) → ECR → ECS Fargate  
-
-Configure `frontend_repository_url` and `backend_repository_url` in `terraform.tfvars`. See [environments/dev/terraform.tfvars.example](environments/dev/terraform.tfvars.example) for all options.
+Configure `frontend_repository_url` and `backend_repository_url` in `terraform.tfvars`.
+See [environments/dev/terraform.tfvars.example](environments/dev/terraform.tfvars.example) for all options.
 
 ---
 
 ## Quick Start
 
-1. **Prerequisites:** AWS account, Terraform CLI, AWS credentials, frontend/backend repos in GitHub, Bitbucket, or GitLab.
+### Prerequisites
 
-2. **Configure:**
-   ```bash
-   cd environments/dev
-   cp terraform.tfvars.example terraform.tfvars
-   # Edit: project_name, db_name, db_username, frontend_repository_url, backend_repository_url
-   ```
+| Tool | Version |
+|------|---------|
+| ![Terraform](https://img.shields.io/badge/Terraform-%3E%3D1.10-844FBA?logo=terraform&logoColor=white&style=flat-square) | `>= 1.10.0` |
+| ![AWS CLI](https://img.shields.io/badge/AWS_CLI-configured-FF9900?logo=amazonwebservices&logoColor=white&style=flat-square) | Credentials configured |
+| ![Git](https://img.shields.io/badge/Git-repos_ready-F05032?logo=git&logoColor=white&style=flat-square) | Frontend & backend repos on GitHub, Bitbucket, or GitLab |
 
-3. **Apply:**
-   ```bash
-   terraform init
-   terraform plan
-   terraform apply
-   ```
+### Steps
 
-4. **Post-apply:** Complete the CodeStar Connections setup in the AWS Console so pipelines can access your VCS repos.
+**1. Configure**
 
-5. **Access:** `terraform output cloudfront_url` — open in browser.
+```bash
+cd environments/dev
+cp terraform.tfvars.example terraform.tfvars
+# Edit: project_name, db_name, db_username, frontend_repository_url, backend_repository_url
+```
+
+**2. Deploy**
+
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+
+**3. Connect VCS** — Complete the CodeStar Connections setup in the AWS Console so pipelines can access your repos.
+
+**4. Access**
+
+```bash
+terraform output cloudfront_url
+# Open the URL in your browser
+```
 
 ---
 
 ## Dev vs Prod Toggles
 
-| Variable | Dev default | Prod recommended |
-|----------|-------------|------------------|
-| `enable_waf` | false | true |
-| `rds_multi_az` | false | true |
-| `ecs_enable_autoscaling` | false | true |
-| `enable_flow_logs` | false | true |
-| `enable_alb_access_logs` | false | true |
-| `enable_cloudwatch_alarms` | false | true |
-| `force_destroy` | true | false |
-| `single_nat_gateway` | true | false (one per AZ) |
+| Variable | Dev | Prod | Purpose |
+|----------|:---:|:----:|---------|
+| `enable_waf` | `false` | `true` | Web Application Firewall |
+| `rds_multi_az` | `false` | `true` | Database high availability |
+| `ecs_enable_autoscaling` | `false` | `true` | Container autoscaling |
+| `enable_flow_logs` | `false` | `true` | VPC traffic logging |
+| `enable_alb_access_logs` | `false` | `true` | Load balancer logging |
+| `enable_cloudwatch_alarms` | `false` | `true` | Operational alerting |
+| `force_destroy` | `true` | `false` | Allow resource deletion |
+| `single_nat_gateway` | `true` | `false` | One NAT per AZ for HA |
 
 All toggles are documented in [environments/dev/terraform.tfvars.example](environments/dev/terraform.tfvars.example).
 
@@ -119,17 +226,45 @@ All toggles are documented in [environments/dev/terraform.tfvars.example](enviro
 
 ## Modules Reference
 
-| Module | Purpose |
-|--------|---------|
-| [network](modules/network) | VPC, public/private/DB subnets, NAT, flow logs |
-| [security_groups](modules/security_groups) | ALB, ECS, RDS SGs |
-| [rds](modules/rds) | RDS + Secrets Manager |
-| [ecs](modules/ecs) | ECS Fargate cluster + service |
-| [alb](modules/alb) | Application Load Balancer |
-| [cloudfront](modules/cloudfront) | CDN with S3 + ALB origins |
-| [cognito](modules/cognito) | User pool + app client |
-| [waf](modules/waf) | CloudFront WAF (us-east-1) |
-| [monitoring](modules/monitoring) | CloudWatch alarms + SNS |
-| [codestar](modules/codestar), [codebuild](modules/codebuild), [codepipeline](modules/codepipeline) | CI/CD |
+| Module | Purpose | Links |
+|--------|---------|-------|
+| **network** | VPC, public/private/DB subnets, NAT, flow logs | [README](modules/network) |
+| **security_groups** | ALB, ECS, RDS security groups | [README](modules/security_groups) |
+| **rds** | RDS + Secrets Manager | [README](modules/rds) |
+| **ecs** | ECS Fargate cluster + service | [README](modules/ecs) |
+| **alb** | Application Load Balancer | [README](modules/alb) |
+| **cloudfront** | CDN with S3 + ALB origins | [README](modules/cloudfront) |
+| **cognito** | User pool + app client | [README](modules/cognito) |
+| **waf** | CloudFront WAF (us-east-1) | [README](modules/waf) |
+| **monitoring** | CloudWatch alarms + SNS | [README](modules/monitoring) |
+| **s3** | S3 bucket for SPA | [README](modules/s3) |
+| **ecr** | Elastic Container Registry | [README](modules/ecr) |
+| **iam** | IAM roles and policies | [README](modules/iam) |
+| **codestar** | VCS connections | [README](modules/codestar) |
+| **codebuild** | Build projects | [README](modules/codebuild) |
+| **codepipeline** | Deployment pipelines | [README](modules/codepipeline) |
 
 Each module has its own README with inputs/outputs.
+
+---
+
+## Cleanup
+
+```bash
+terraform destroy
+```
+
+> **Note:** If `force_destroy = false`, you must empty S3 buckets and ECR repos manually before destroying.
+
+---
+
+<div align="center">
+
+**Built with Terraform on AWS**
+
+[![Terraform](https://img.shields.io/badge/IaC-Terraform-844FBA?logo=terraform&logoColor=white&style=for-the-badge)](https://www.terraform.io/)
+[![AWS](https://img.shields.io/badge/Cloud-AWS-FF9900?logo=amazonwebservices&logoColor=white&style=for-the-badge)](https://aws.amazon.com/)
+
+MIT License &copy; 2026 [Tarandeep Singh](https://github.com/22taran)
+
+</div>
