@@ -1,0 +1,26 @@
+# Example buildspec.yaml for static build - place in repo root or pass path via static_buildspec
+# Env vars from root: VITE_API_URL, VITE_COGNITO_*, S3_BUCKET, CLOUDFRONT_ID, BUILD_OUTPUT_PATH
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - echo "Installing dependencies..."
+  build:
+    commands:
+      - cd frontend
+      - npm ci
+      - |
+        [ -n "$VITE_API_URL" ] && export VITE_API_URL
+        [ -n "$VITE_COGNITO_USER_POOL_ID" ] && export VITE_COGNITO_USER_POOL_ID
+        [ -n "$VITE_COGNITO_CLIENT_ID" ] && export VITE_COGNITO_CLIENT_ID
+        npm run build
+  post_build:
+    commands:
+      - aws s3 sync ${BUILD_OUTPUT_PATH:-dist}/ s3://$S3_BUCKET/ --delete
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_ID --paths "/*"
+artifacts:
+  files:
+    - '**/*'
+cache:
+  paths:
+    - node_modules/**/*

@@ -1,0 +1,97 @@
+# Copy to terraform.tfvars and fill in values
+
+# =============================================================================
+# Required
+# =============================================================================
+
+project_name = "my-project"
+
+# Database - required
+db_name     = "myapp_dev"
+db_username = "myapp_admin"
+
+# =============================================================================
+# Repositories (full GitHub URLs - can be same monorepo or different repos)
+# =============================================================================
+# Frontend: CodeBuild static site build
+# Backend: CodePipeline Source stage
+# Set to "" if not using CI/CD
+frontend_repository_url = "https://github.com/your-org/your-frontend-repo"
+backend_repository_url  = "https://github.com/your-org/your-backend-repo"
+
+# =============================================================================
+# Network (optional - all have defaults)
+# =============================================================================
+# region      = "us-east-2"
+# environment = "dev"
+# vpc_cidr    = "10.0.0.0/16"
+
+# NAT gateways: one per AZ for HA, single for cheaper dev.
+# single_nat_gateway = true   # recommended for prod: false (one per AZ)
+
+# VPC Flow Logs to CloudWatch (security/audit).
+# enable_flow_logs = false    # recommended for prod: true
+
+# ALB access logs to S3 for troubleshooting and investigations.
+# enable_alb_access_logs = false  # recommended for prod: true
+
+# =============================================================================
+# CloudFront
+# =============================================================================
+# WAF protects CloudFront from common web attacks.
+# enable_waf = false          # recommended for prod: true
+
+# =============================================================================
+# Database (optional)
+# =============================================================================
+# db_instance_class   = "db.t3.micro"
+# db_port             = 5432
+
+# Multi-AZ improves availability at higher cost.
+# rds_multi_az        = false # recommended for prod: true
+
+# Final snapshot prevents accidental data loss on destroy.
+# skip_final_snapshot = true  # recommended for prod: false
+
+# =============================================================================
+# ECS (optional)
+# =============================================================================
+# app_port          = 80
+# health_check_path = "/"
+# ecs_cpu           = 512
+# ecs_memory        = 1024
+# desired_count     = 2                 # recommended for prod: >= 2
+
+# Autoscaling keeps the service responsive under load.
+# ecs_enable_autoscaling       = false  # recommended for prod: true
+# ecs_autoscaling_min_capacity = 1      # recommended for prod: >= 2
+# ecs_autoscaling_max_capacity = 10     # adjust per traffic
+
+# =============================================================================
+# S3 buckets (static site, artifacts, logs)
+# =============================================================================
+# force_destroy = true         # recommended for prod: false
+
+# =============================================================================
+# CodeBuild (optional)
+# =============================================================================
+# codebuild_image_static        = "aws/codebuild/ami/amazonlinux-x86_64-base:latest"
+# codebuild_image_backend       = "aws/codebuild/ami/amazonlinux-x86_64-base:latest"
+# backend_dockerfile_path       = "backend/Dockerfile"
+# backend_docker_build_context  = "backend"
+# static_buildspec              = "frontend/buildspec.yaml"  # for atom-logistic monorepo
+# backend_buildspec             = "backend/buildspec.yaml"   # for atom-logistic monorepo
+# static_build_output_path      = "dist"
+
+# =============================================================================
+# CodePipeline (optional)
+# =============================================================================
+# branch_name                     = "main"
+# backend_pipeline_artifact_bucket = null   # null = S3 module creates bucket
+# backend_pipeline_role_arn       = null   # null = module creates role
+
+# =============================================================================
+# Monitoring & alerts
+# =============================================================================
+# CloudWatch alarms + SNS for ECS, ALB, RDS.
+# enable_cloudwatch_alarms = false  # recommended for prod: true

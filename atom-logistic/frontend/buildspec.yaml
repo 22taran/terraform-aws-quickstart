@@ -1,0 +1,27 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "Installing frontend dependencies..."
+  build:
+    commands:
+      - cd frontend
+      - npm ci
+      - |
+        [ -n "$VITE_API_URL" ] && export VITE_API_URL
+        [ -n "$VITE_COGNITO_USER_POOL_ID" ] && export VITE_COGNITO_USER_POOL_ID
+        [ -n "$VITE_COGNITO_CLIENT_ID" ] && export VITE_COGNITO_CLIENT_ID
+        npm run build
+  post_build:
+    commands:
+      - aws s3 sync ${BUILD_OUTPUT_PATH:-dist}/ s3://$S3_BUCKET/ --delete
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_ID --paths "/*"
+
+artifacts:
+  files:
+    - '**/*'
+
+cache:
+  paths:
+    - frontend/node_modules/**/*

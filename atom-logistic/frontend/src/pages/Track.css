@@ -1,0 +1,116 @@
+.track-page h1 {
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+}
+
+.track-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  max-width: 480px;
+}
+
+.track-input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.track-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.track-form button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.track-form button:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.track-error {
+  color: var(--error);
+  margin-bottom: 1rem;
+}
+
+.track-result {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.track-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.track-header code {
+  font-size: 1.1rem;
+  background: var(--bg);
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+}
+
+.track-route {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.track-route strong {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.track-route p {
+  margin: 0.25rem 0 0;
+}
+
+.track-timeline h3 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+}
+
+.track-event {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.track-event:last-child {
+  border-bottom: none;
+}
+
+.track-event-status {
+  font-weight: 500;
+}
+
+.track-event-loc {
+  margin-left: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.track-event p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.track-event-time {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}

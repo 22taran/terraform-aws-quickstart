@@ -1,0 +1,14 @@
+terraform.tfvars
+*.tfstate*
+.terraform/
+*.auto.tfvars
+*.plan
+*.tfplan
+*.tfstate.backup
+**/terraform.tfvars
+**/terraform.tfstate*
+**/terraform.tfstate.backup
+environments/dev/errored.tfstate
+
+# Sample app dependencies
+**/node_modules/
