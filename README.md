@@ -24,7 +24,8 @@ Source from **GitHub**, **Bitbucket**, or **GitLab** via **CodeStar Connections*
 
 <div align="center">
 
-![AWS Infrastructure Diagram](Infrastructure.png)
+![AWS Infrastructure Diagram](infrastructure.png)
+
 
 </div>
 
