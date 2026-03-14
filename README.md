@@ -1,8 +1,6 @@
 <div align="center">
 
-# terraform-aws-quickstart
-
-### Production-Grade AWS Infrastructure for Containerized Applications
+# AWS Infrastructure for Containerized Applications with Terraform and CI/CD
 
 [![Terraform](https://img.shields.io/badge/Terraform-%3E%3D1.10-844FBA?logo=terraform&logoColor=white)](https://www.terraform.io/)
 [![AWS Provider](https://img.shields.io/badge/AWS_Provider-~%3E6.0-FF9900?logo=amazonwebservices&logoColor=white)](https://registry.terraform.io/providers/hashicorp/aws/latest)
@@ -10,8 +8,7 @@
 [![GitHub Stars](https://img.shields.io/github/stars/22taran/terraform-aws-quickstart?style=flat&logo=github&color=181717)](https://github.com/22taran/terraform-aws-quickstart/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/22taran/terraform-aws-quickstart?style=flat&logo=github&color=181717)](https://github.com/22taran/terraform-aws-quickstart/network/members)
 
-SPA on **S3 + CloudFront** &bull; API on **ECS Fargate** &bull; Database on **RDS** &bull; Auth via **Cognito**
-WAF &bull; CloudWatch Monitoring &bull; Full **CI/CD Pipeline** via **CodePipeline + CodeBuild**
+SPA on **S3 + CloudFront + WAF** &bull; API on **ECS Fargate** &bull; Database on **RDS** &bull; Auth via **Cognito** &bull; CloudWatch Monitoring &bull; Full **CI/CD Pipeline** via **CodePipeline + CodeBuild**
 Source from **GitHub**, **Bitbucket**, or **GitLab** via **CodeStar Connections**
 
 ---
@@ -25,6 +22,9 @@ Source from **GitHub**, **Bitbucket**, or **GitLab** via **CodeStar Connections*
 <div align="center">
 
 ![AWS Infrastructure Diagram](Infrastructure.png)
+
+
+> If `infrastructure.png` is missing, add an architecture diagram to the repo root or remove this image block.
 
 
 </div>
@@ -82,10 +82,13 @@ terraform-aws-quickstart/
 │       ├── main.tf                 # Wires all modules together
 │       ├── variables.tf
 │       ├── outputs.tf
-│       └── terraform.tfvars.example
+│       ├── versions.tf             # Terraform + provider versions, backend
+│       ├── provider.tf              # AWS provider config
+│       ├── terraform.tfvars.example
+│       └── terraform.tfvars         # Your values (create from example)
 └── modules/                        # Reusable, composable modules
     ├── network/                    # VPC, subnets, NAT, flow logs
-    ├── security_groups/            # ALB, ECS, RDS security groups
+    ├── security_groups/            # ALB, ECS, RDS (terraform-aws-modules/security-group/aws)
     ├── alb/                        # Application Load Balancer
     ├── ecs/                        # ECS Fargate cluster + service
     ├── rds/                        # RDS + Secrets Manager
@@ -229,21 +232,21 @@ All toggles are documented in [environments/dev/terraform.tfvars.example](enviro
 
 | Module | Purpose | Links |
 |--------|---------|-------|
-| **network** | VPC, public/private/DB subnets, NAT, flow logs | [README](modules/network) |
-| **security_groups** | ALB, ECS, RDS security groups | [README](modules/security_groups) |
-| **rds** | RDS + Secrets Manager | [README](modules/rds) |
-| **ecs** | ECS Fargate cluster + service | [README](modules/ecs) |
-| **alb** | Application Load Balancer | [README](modules/alb) |
-| **cloudfront** | CDN with S3 + ALB origins | [README](modules/cloudfront) |
-| **cognito** | User pool + app client | [README](modules/cognito) |
-| **waf** | CloudFront WAF (us-east-1) | [README](modules/waf) |
-| **monitoring** | CloudWatch alarms + SNS | [README](modules/monitoring) |
-| **s3** | S3 bucket for SPA | [README](modules/s3) |
-| **ecr** | Elastic Container Registry | [README](modules/ecr) |
-| **iam** | IAM roles and policies | [README](modules/iam) |
-| **codestar** | VCS connections | [README](modules/codestar) |
-| **codebuild** | Build projects | [README](modules/codebuild) |
-| **codepipeline** | Deployment pipelines | [README](modules/codepipeline) |
+| **network** | VPC, public/private/DB subnets, NAT, flow logs | [README](modules/network/README.md) |
+| **security_groups** | ALB, ECS, RDS security groups (uses terraform-aws-modules/security-group/aws) | [README](modules/security_groups/README.md) |
+| **rds** | RDS + Secrets Manager | [README](modules/rds/README.md) |
+| **ecs** | ECS Fargate cluster + service | [README](modules/ecs/README.md) |
+| **alb** | Application Load Balancer | [README](modules/alb/README.md) |
+| **cloudfront** | CDN with S3 + ALB origins | [README](modules/cloudfront/README.md) |
+| **cognito** | User pool + app client | [README](modules/cognito/README.md) |
+| **waf** | CloudFront WAF (us-east-1) | [README](modules/waf/README.md) |
+| **monitoring** | CloudWatch alarms + SNS | [README](modules/monitoring/README.md) |
+| **s3** | S3 bucket for SPA | [README](modules/s3/README.md) |
+| **ecr** | Elastic Container Registry | [README](modules/ecr/README.md) |
+| **iam** | IAM roles and policies | [README](modules/iam/README.md) |
+| **codestar** | VCS connections | [README](modules/codestar/README.md) |
+| **codebuild** | Build projects | [README](modules/codebuild/README.md) |
+| **codepipeline** | Deployment pipelines | [README](modules/codepipeline/README.md) |
 
 Each module has its own README with inputs/outputs.
 

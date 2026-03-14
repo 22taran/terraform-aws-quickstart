@@ -60,6 +60,18 @@ variable "api_path_pattern" {
   default     = "/api/*"
 }
 
+variable "api_cache_policy_id" {
+  description = "CloudFront cache policy ID for API origin (default: CachingDisabled)"
+  type        = string
+  default     = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+}
+
+variable "api_origin_request_policy_id" {
+  description = "CloudFront origin request policy ID for API origin"
+  type        = string
+  default     = "216adef6-5c7f-47e4-b989-5492eafa07d3"
+}
+
 variable "error_response_page" {
   description = "Page to serve for 403/404 (SPA fallback)"
   type        = string

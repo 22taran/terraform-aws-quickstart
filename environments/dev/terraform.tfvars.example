@@ -88,7 +88,6 @@ backend_repository_url  = "https://github.com/your-org/your-backend-repo"
 # =============================================================================
 # branch_name                     = "main"
 # backend_pipeline_artifact_bucket = null   # null = S3 module creates bucket
-# backend_pipeline_role_arn       = null   # null = module creates role
 
 # =============================================================================
 # Monitoring & alerts

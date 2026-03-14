@@ -8,10 +8,10 @@ resource "aws_sns_topic" "alarms" {
 resource "aws_cloudwatch_metric_alarm" "rds_cpu" {
   alarm_name          = "${var.project_name}-rds-cpu"
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = 2
+  evaluation_periods  = var.alarm_evaluation_periods
   metric_name         = "CPUUtilization"
   namespace           = "AWS/RDS"
-  period              = 300
+  period              = var.alarm_period_rds_seconds
   statistic           = "Average"
   threshold           = var.alarm_cpu_rds_threshold_percent
 
@@ -47,10 +47,10 @@ resource "aws_cloudwatch_metric_alarm" "ecs_unhealthy" {
 resource "aws_cloudwatch_metric_alarm" "alb_5xx" {
   alarm_name          = "${var.project_name}-alb-5xx"
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = 2
+  evaluation_periods  = var.alarm_evaluation_periods
   metric_name         = "HTTPCode_ELB_5XX_Count"
   namespace           = "AWS/ApplicationELB"
-  period              = 60
+  period              = var.alarm_period_alb_seconds
   statistic           = "Sum"
   threshold           = var.alarm_alb_5xx_threshold
 

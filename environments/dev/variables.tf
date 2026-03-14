@@ -273,9 +273,3 @@ variable "backend_pipeline_artifact_bucket" {
   type        = string
   default     = null
 }
-
-variable "backend_pipeline_role_arn" {
-  description = "Existing IAM role ARN for imported pipeline (null = module creates)"
-  type        = string
-  default     = null
-}
