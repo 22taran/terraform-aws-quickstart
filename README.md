@@ -13,7 +13,7 @@ Source from **GitHub**, **Bitbucket**, or **GitLab** via **CodeStar Connections*
 
 ---
 
-[Architecture](#architecture) &bull; [CI/CD Pipeline](#cicd-pipeline) &bull; [Quick Start](#quick-start) &bull; [Modules](#modules-reference) &bull; [Toggles](#dev-vs-prod-toggles)
+[Architecture](#architecture) &bull; [CI/CD Pipeline](#cicd-pipeline) &bull; [Quick Start](#quick-start) &bull; [Usage](#usage) &bull; [Modules](#modules-reference) &bull; [Toggles](#dev-vs-prod-toggles)
 
 </div>
 
@@ -77,6 +77,10 @@ Cognito handles auth; CodeStar Connections (GitHub, Bitbucket, or GitLab) + Code
 
 ```
 terraform-aws-quickstart/
+├── bootstrap/                      # One-time S3 for remote state (versioning, encryption)
+│   ├── create-state-bucket.sh      # Creates state bucket (versioning, encryption)
+│   ├── .env.example                # Copy to .env: project_name, environment, etc.
+│   └── README.md
 ├── environments/
 │   └── dev/                        # Dev environment
 │       ├── main.tf                 # Wires all modules together
@@ -184,6 +188,17 @@ See [environments/dev/terraform.tfvars.example](environments/dev/terraform.tfvar
 
 ### Steps
 
+**0. Bootstrap (one-time)** — If using S3 remote state and the bucket doesn’t exist:
+
+```bash
+cd bootstrap && cp .env.example .env
+# Edit .env: PROJECT_NAME, ENVIRONMENT, AWS_REGION (must match terraform.tfvars)
+./create-state-bucket.sh   # Uses S3 locking by default (versioning + use_lockfile)
+# Add -k for KMS encryption; -d for DynamoDB (only for team/concurrent runs)
+```
+
+Copy the printed backend block into `environments/dev/versions.tf`. See [bootstrap/README.md](bootstrap/README.md).
+
 **1. Configure**
 
 ```bash
@@ -208,6 +223,45 @@ terraform apply
 terraform output cloudfront_url
 # Open the URL in your browser
 ```
+
+---
+
+## Usage
+
+### Bootstrap (S3 state backend)
+
+```bash
+cd bootstrap
+cp .env.example .env
+# Edit .env: PROJECT_NAME, ENVIRONMENT, AWS_REGION (must match terraform.tfvars)
+./create-state-bucket.sh          # Default: S3 locking (versioning + use_lockfile)
+./create-state-bucket.sh -k      # With KMS encryption
+./create-state-bucket.sh -d      # With DynamoDB for team locking (only for concurrent runs)
+./create-state-bucket.sh -r us-west-2
+```
+
+**Note:** By default, state locking uses S3 (versioning + `use_lockfile`). Use `-d` only when multiple people run Terraform concurrently and need DynamoDB-based locking.
+
+Copy the printed backend block into `environments/dev/versions.tf`. See [bootstrap/README.md](bootstrap/README.md).
+
+### Terraform workflow
+
+```bash
+cd environments/dev
+terraform init
+terraform plan
+terraform apply
+terraform output cloudfront_url
+```
+
+### Environment variables
+
+| Source | Purpose |
+|--------|---------|
+| `bootstrap/.env` | PROJECT_NAME, ENVIRONMENT, AWS_REGION for state bucket |
+| `environments/dev/terraform.tfvars` | project_name, db_*, repos, toggles |
+
+Keep `PROJECT_NAME` and `ENVIRONMENT` in sync between `bootstrap/.env` and `terraform.tfvars`.
 
 ---
 

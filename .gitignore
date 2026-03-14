@@ -6,6 +6,7 @@ terraform.tfvars
 *.tfplan
 *.tfstate.backup
 **/terraform.tfvars
+bootstrap/.env
 **/terraform.tfstate*
 **/terraform.tfstate.backup
 environments/dev/errored.tfstate
