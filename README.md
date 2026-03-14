@@ -26,6 +26,7 @@ Source from **GitHub**, **Bitbucket**, or **GitLab** via **CodeStar Connections*
 
 ![AWS Infrastructure Diagram](infrastructure.png)
 
+
 </div>
 
 **Flow:** Users &rarr; CloudFront (optional WAF) &rarr; S3 (static) &rarr; ALB (API) &rarr; ECS Fargate &rarr; RDS.
