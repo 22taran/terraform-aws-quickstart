@@ -41,6 +41,30 @@ variable "alarm_alb_5xx_threshold" {
   default     = 5
 }
 
+variable "alarm_evaluation_periods" {
+  description = "Number of periods to evaluate before triggering alarm"
+  type        = number
+  default     = 2
+}
+
+variable "alarm_period_rds_seconds" {
+  description = "RDS metric period in seconds"
+  type        = number
+  default     = 300
+}
+
+variable "alarm_period_ecs_seconds" {
+  description = "ECS metric period in seconds"
+  type        = number
+  default     = 60
+}
+
+variable "alarm_period_alb_seconds" {
+  description = "ALB metric period in seconds"
+  type        = number
+  default     = 60
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = map(string)

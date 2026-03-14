@@ -11,7 +11,7 @@ module "ecr" {
       selection = {
         tagStatus   = "any"
         countType   = "imageCountMoreThan"
-        countNumber = 30
+        countNumber = var.lifecycle_policy_image_count
       }
       action = {
         type = "expire" # Expire the oldest images

@@ -1,8 +1,10 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  naming_prefix = var.project_name
-  tags          = var.tags
+  naming_prefix     = var.project_name
+  tags              = var.tags
+  # CodeBuild creates log groups under /aws/codebuild/<project-name>
+  codebuild_log_arn = "arn:aws:logs:*:${data.aws_caller_identity.current.account_id}:log-group:/codebuild/${var.project_name}*"
 }
 
 # -----------------------------
@@ -69,18 +71,25 @@ data "aws_iam_policy_document" "codepipeline" {
     resources = ["*"]
   }
 
-  # ECR read access for ECS deploy stage
+  # ECR read access for ECS deploy stage (GetAuthorizationToken requires "*" per AWS)
+  statement {
+    effect = "Allow"
+
+    actions = ["ecr:GetAuthorizationToken"]
+
+    resources = ["*"]
+  }
+
   statement {
     effect = "Allow"
 
     actions = [
-      "ecr:GetAuthorizationToken",
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage",
       "ecr:BatchCheckLayerAvailability",
     ]
 
-    resources = ["*"]
+    resources = [var.ecr_repository_arn]
   }
 
   # ECS deploy actions
@@ -227,7 +236,7 @@ resource "aws_iam_role" "codebuild_backend" {
 }
 
 data "aws_iam_policy_document" "codebuild_backend" {
-  # Logs
+  # Logs (scoped to this project's CodeBuild log groups)
   statement {
     effect = "Allow"
 
@@ -237,16 +246,15 @@ data "aws_iam_policy_document" "codebuild_backend" {
       "logs:PutLogEvents",
     ]
 
-    resources = ["*"]
+    resources = [local.codebuild_log_arn, "${local.codebuild_log_arn}:*"]
   }
 
-  # ECR push to specific repository
+  # ECR push to specific repository (backend)
+  # GetAuthorizationToken requires "*" per AWS
   statement {
     effect = "Allow"
 
-    actions = [
-      "ecr:GetAuthorizationToken",
-    ]
+    actions = ["ecr:GetAuthorizationToken"]
 
     resources = ["*"]
   }

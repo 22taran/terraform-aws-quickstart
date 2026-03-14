@@ -22,6 +22,11 @@ variable "app_port" {
   description = "Port the target application listens on"
   type        = number
   default     = 80
+
+  validation {
+    condition     = var.app_port >= 1 && var.app_port <= 65535
+    error_message = "app_port must be between 1 and 65535."
+  }
 }
 
 variable "health_check_path" {
@@ -34,6 +39,11 @@ variable "listener_port" {
   description = "Port the ALB listener accepts traffic on (typically 80 for HTTP)"
   type        = number
   default     = 80
+
+  validation {
+    condition     = var.listener_port >= 1 && var.listener_port <= 65535
+    error_message = "listener_port must be between 1 and 65535."
+  }
 }
 
 variable "health_check_healthy_threshold" {

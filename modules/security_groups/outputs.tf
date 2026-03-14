@@ -1,14 +1,14 @@
-output "alb_sg_id" {
-  description = "ID of the ALB security group"
-  value       = aws_security_group.alb.id
+output "security_group_id" {
+  description = "ID of the security group"
+  value       = module.security_group.security_group_id
 }
 
-output "ecs_sg_id" {
-  description = "ID of the ECS security group"
-  value       = aws_security_group.ecs.id
+output "security_group_arn" {
+  description = "ARN of the security group"
+  value       = module.security_group.security_group_arn
 }
 
-output "rds_sg_id" {
-  description = "ID of the RDS security group"
-  value       = aws_security_group.rds.id
+output "security_group_name" {
+  description = "Name of the security group"
+  value       = module.security_group.security_group_name
 }

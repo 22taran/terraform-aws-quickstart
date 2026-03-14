@@ -32,6 +32,11 @@ variable "app_port" {
   description = "Port the application listens on"
   type        = number
   default     = 80
+
+  validation {
+    condition     = var.app_port >= 1 && var.app_port <= 65535
+    error_message = "app_port must be between 1 and 65535."
+  }
 }
 
 variable "health_check_path" {
@@ -44,18 +49,33 @@ variable "cpu" {
   description = "CPU units for the task (256, 512, 1024, 2048, 4096)"
   type        = number
   default     = 256
+
+  validation {
+    condition     = contains([256, 512, 1024, 2048, 4096], var.cpu)
+    error_message = "cpu must be one of: 256, 512, 1024, 2048, 4096."
+  }
 }
 
 variable "memory" {
   description = "Memory in MB for the task (512, 1024, 2048, 4096, 8192)"
   type        = number
   default     = 512
+
+  validation {
+    condition     = contains([512, 1024, 2048, 4096, 8192], var.memory)
+    error_message = "memory must be one of: 512, 1024, 2048, 4096, 8192."
+  }
 }
 
 variable "desired_count" {
   description = "Number of tasks to run"
   type        = number
   default     = 1
+
+  validation {
+    condition     = var.desired_count >= 0
+    error_message = "desired_count must be non-negative."
+  }
 }
 
 variable "db_endpoint" {
@@ -163,6 +183,18 @@ variable "autoscaling_target_cpu_percent" {
   description = "Target CPU utilization percentage for ECS autoscaling"
   type        = number
   default     = 70
+}
+
+variable "autoscaling_scale_in_cooldown" {
+  description = "Scale-in cooldown in seconds for ECS autoscaling"
+  type        = number
+  default     = 300
+}
+
+variable "autoscaling_scale_out_cooldown" {
+  description = "Scale-out cooldown in seconds for ECS autoscaling"
+  type        = number
+  default     = 60
 }
 
 variable "tags" {

@@ -1,4 +1,7 @@
 data "aws_caller_identity" "current" {}
+data "aws_ec2_managed_prefix_list" "cloudfront" {
+  name = "com.amazonaws.global.cloudfront.origin-facing"
+}
 
 locals {
   project_name = "${var.project_name}-${var.environment}"
@@ -18,17 +21,49 @@ module "network" {
   enable_flow_logs   = var.enable_flow_logs
 }
 
-# Security Groups
-module "security_groups" {
+# Security Groups (uses terraform-aws-modules/security-group/aws inside module)
+module "security_group_alb" {
   source = "../../modules/security_groups"
 
-  vpc_id       = module.network.vpc_id
-  project_name = local.project_name
-  app_port     = var.app_port
-  db_port      = var.db_port
+  vpc_id          = module.network.vpc_id
+  project_name    = local.project_name
+  name            = "alb"
+  description     = "ALB security group"
+  to_port         = 80
+  from_port       = 80
+  protocol        = "tcp"
+  prefix_list_ids = [data.aws_ec2_managed_prefix_list.cloudfront.id]
 }
 
-# Cognito
+module "security_group_ecs" {
+  source = "../../modules/security_groups"
+
+  vpc_id                    = module.network.vpc_id
+  project_name              = local.project_name
+  name                      = "ecs"
+  description               = "ECS security group"
+  from_port                 = var.app_port
+  to_port                   = var.app_port
+  protocol                  = "tcp"
+  use_source_security_group = true
+  source_security_group_id  = module.security_group_alb.security_group_id
+}
+
+module "security_group_rds" {
+  source = "../../modules/security_groups"
+
+  vpc_id                    = module.network.vpc_id
+  project_name              = local.project_name
+  name                      = "rds"
+  description               = "RDS security group"
+  from_port                 = var.db_port
+  to_port                   = var.db_port
+  protocol                  = "tcp"
+  use_source_security_group = true
+  source_security_group_id  = module.security_group_ecs.security_group_id
+}
+
+
 module "cognito" {
   source = "../../modules/cognito"
 
@@ -41,7 +76,7 @@ module "rds" {
 
   project_name         = local.project_name
   db_subnet_group_name = module.network.database_subnet_group_name
-  security_group_id    = module.security_groups.rds_sg_id
+  security_group_id    = module.security_group_rds.security_group_id
   db_name              = var.db_name
   db_username          = var.db_username
   instance_class       = var.db_instance_class
@@ -107,7 +142,7 @@ module "alb" {
   project_name       = local.project_name
   vpc_id             = module.network.vpc_id
   public_subnets     = module.network.public_subnets
-  security_group_id  = module.security_groups.alb_sg_id
+  security_group_id  = module.security_group_alb.security_group_id
   app_port           = var.app_port
   health_check_path  = var.health_check_path
   access_logs_bucket = var.enable_alb_access_logs ? aws_s3_bucket.alb_logs[0].id : null
@@ -133,7 +168,7 @@ module "ecs" {
   project_name                       = local.project_name
   cluster_name                       = "${local.project_name}-cluster"
   private_subnets                    = module.network.private_subnets
-  security_group_id                  = module.security_groups.ecs_sg_id
+  security_group_id                  = module.security_group_ecs.security_group_id
   target_group_arn                   = module.alb.target_group_arn
   container_image                    = "${module.ecr.repository_url}:latest"
   app_port                           = var.app_port
@@ -254,8 +289,9 @@ module "codebuild" {
   }
 }
 
-# CodeBuild for backend (ecr_repository_url present = backend/CodePipeline)
+# CodeBuild for backend (only when backend repo URL is set)
 module "codebuild_backend" {
+  count  = var.backend_repository_url != "" ? 1 : 0
   source = "../../modules/codebuild"
 
   project_name                      = local.project_name
@@ -275,8 +311,9 @@ module "codebuild_backend" {
   }
 }
 
-# CodePipeline for backend (Source → Build → Deploy)
+# CodePipeline for backend (only when backend repo URL is set; Source → Build → Deploy)
 module "codepipeline" {
+  count  = var.backend_repository_url != "" ? 1 : 0
   source = "../../modules/codepipeline"
 
   project_name            = local.project_name
@@ -284,7 +321,7 @@ module "codepipeline" {
   codestar_connection_arn = module.codestar.connection_arn
   repository_id           = module.codestar.backend_repository_id
   branch_name             = var.branch_name
-  codebuild_project_name  = module.codebuild_backend.project_name
+  codebuild_project_name  = module.codebuild_backend[0].project_name
   artifact_store_bucket   = var.backend_pipeline_artifact_bucket != null ? var.backend_pipeline_artifact_bucket : module.s3_artifacts[0].bucket_name
   deploy_to_ecs           = true
   ecs_cluster_name        = module.ecs.cluster_name

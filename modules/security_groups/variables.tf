@@ -8,22 +8,59 @@ variable "project_name" {
   type        = string
 }
 
-variable "app_port" {
-  description = "Port the ECS application listens on"
-  type        = number
-  default     = 80
+variable "name" {
+  description = "Name of the security group"
+  type        = string
 }
 
-variable "db_port" {
-  description = "Port the RDS database listens on (PostgreSQL default 5432)"
-  type        = number
-  default     = 5432
+variable "description" {
+  description = "Description of the security group"
+  type        = string
 }
 
-variable "alb_ingress_port" {
-  description = "Port the ALB accepts traffic on (typically 80 for HTTP)"
+variable "from_port" {
+  description = "From port for ingress rule"
   type        = number
-  default     = 80
+
+  validation {
+    condition     = var.from_port >= 0 && var.from_port <= 65535
+    error_message = "from_port must be between 0 and 65535."
+  }
+}
+
+variable "to_port" {
+  description = "To port for ingress rule"
+  type        = number
+
+  validation {
+    condition     = var.to_port >= 0 && var.to_port <= 65535
+    error_message = "to_port must be between 0 and 65535."
+  }
+}
+
+variable "protocol" {
+  description = "Protocol for ingress rule (e.g. tcp)"
+  type        = string
+  default     = "tcp"
+}
+
+# Use exactly one of: prefix_list_ids (e.g. ALB/CloudFront) or source_security_group_id (e.g. ECS from ALB, RDS from ECS)
+variable "prefix_list_ids" {
+  description = "Prefix list IDs for ingress (e.g. CloudFront). Omit when using source_security_group_id."
+  type        = list(string)
+  default     = []
+}
+
+variable "use_source_security_group" {
+  description = "When true, add ingress rule from source_security_group_id. Must be plan-time known (not derived from resource output)."
+  type        = bool
+  default     = false
+}
+
+variable "source_security_group_id" {
+  description = "Source security group ID for ingress (e.g. allow from ALB). Required when use_source_security_group is true."
+  type        = string
+  default     = null
 }
 
 variable "tags" {

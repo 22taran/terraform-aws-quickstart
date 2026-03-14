@@ -21,6 +21,11 @@ variable "db_name" {
 variable "db_username" {
   description = "Master username for the database"
   type        = string
+
+  validation {
+    condition     = length(trimspace(var.db_username)) > 0
+    error_message = "db_username must be non-empty."
+  }
 }
 
 variable "instance_class" {
@@ -45,6 +50,11 @@ variable "port" {
   description = "Port the database listens on (PostgreSQL default 5432)"
   type        = number
   default     = 5432
+
+  validation {
+    condition     = var.port >= 1 && var.port <= 65535
+    error_message = "port must be between 1 and 65535."
+  }
 }
 
 variable "engine" {
