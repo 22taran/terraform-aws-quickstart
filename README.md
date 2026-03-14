@@ -24,9 +24,6 @@ Source from **GitHub**, **Bitbucket**, or **GitLab** via **CodeStar Connections*
 ![AWS Infrastructure Diagram](Infrastructure.png)
 
 
-> If `infrastructure.png` is missing, add an architecture diagram to the repo root or remove this image block.
-
-
 </div>
 
 **Flow:** Users &rarr; CloudFront (optional WAF) &rarr; S3 (static) &rarr; ALB (API) &rarr; ECS Fargate &rarr; RDS.
