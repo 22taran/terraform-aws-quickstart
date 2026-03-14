@@ -13,7 +13,7 @@ Source from **GitHub**, **Bitbucket**, or **GitLab** via **CodeStar Connections*
 
 ---
 
-[Architecture](#architecture) &bull; [CI/CD Pipeline](#cicd-pipeline) &bull; [Quick Start](#quick-start) &bull; [Usage](#usage) &bull; [Modules](#modules-reference) &bull; [Toggles](#dev-vs-prod-toggles)
+[Architecture](#architecture) &bull; [CI/CD Pipeline](#cicd-pipeline) &bull; [Quick Start](#quick-start) &bull; [Modules](#modules-reference) &bull; [Toggles](#dev-vs-prod-toggles)
 
 </div>
 
@@ -21,10 +21,7 @@ Source from **GitHub**, **Bitbucket**, or **GitLab** via **CodeStar Connections*
 
 <div align="center">
 
-![AWS Infrastructure Diagram](infrastructure.png)
-
-
-> If `infrastructure.png` is missing, add an architecture diagram to the repo root or remove this image block.
+![AWS Infrastructure Diagram](Infrastructure.png)
 
 
 </div>
@@ -188,13 +185,12 @@ See [environments/dev/terraform.tfvars.example](environments/dev/terraform.tfvar
 
 ### Steps
 
-**0. Bootstrap (one-time)** — If using S3 remote state and the bucket doesn’t exist:
+**0. Bootstrap (one-time)**
 
 ```bash
 cd bootstrap && cp .env.example .env
 # Edit .env: PROJECT_NAME, ENVIRONMENT, AWS_REGION (must match terraform.tfvars)
-./create-state-bucket.sh   # Uses S3 locking by default (versioning + use_lockfile)
-# Add -k for KMS encryption; -d for DynamoDB (only for team/concurrent runs)
+./create-state-bucket.sh   # S3 locking by default; -k for KMS; -d for DynamoDB (teams)
 ```
 
 Copy the printed backend block into `environments/dev/versions.tf`. See [bootstrap/README.md](bootstrap/README.md).
@@ -207,7 +203,7 @@ cp terraform.tfvars.example terraform.tfvars
 # Edit: project_name, db_name, db_username, frontend_repository_url, backend_repository_url
 ```
 
-**2. Deploy**
+**2. Deploy infrastructure**
 
 ```bash
 terraform init
@@ -215,53 +211,16 @@ terraform plan
 terraform apply
 ```
 
-**3. Connect VCS** — Complete the CodeStar Connections setup in the AWS Console so pipelines can access your repos.
+**3. Connect VCS** — In AWS Console → CodePipeline → Connections, approve the CodeStar Connection so pipelines can access your repos.
 
-**4. Access**
+**4. Run pipelines** — Trigger the frontend and backend pipelines to deploy your code (CodePipeline → choose pipeline → Release change).
+
+**5. Access** — After pipelines complete successfully:
 
 ```bash
 terraform output cloudfront_url
 # Open the URL in your browser
 ```
-
----
-
-## Usage
-
-### Bootstrap (S3 state backend)
-
-```bash
-cd bootstrap
-cp .env.example .env
-# Edit .env: PROJECT_NAME, ENVIRONMENT, AWS_REGION (must match terraform.tfvars)
-./create-state-bucket.sh          # Default: S3 locking (versioning + use_lockfile)
-./create-state-bucket.sh -k      # With KMS encryption
-./create-state-bucket.sh -d      # With DynamoDB for team locking (only for concurrent runs)
-./create-state-bucket.sh -r us-west-2
-```
-
-**Note:** By default, state locking uses S3 (versioning + `use_lockfile`). Use `-d` only when multiple people run Terraform concurrently and need DynamoDB-based locking.
-
-Copy the printed backend block into `environments/dev/versions.tf`. See [bootstrap/README.md](bootstrap/README.md).
-
-### Terraform workflow
-
-```bash
-cd environments/dev
-terraform init
-terraform plan
-terraform apply
-terraform output cloudfront_url
-```
-
-### Environment variables
-
-| Source | Purpose |
-|--------|---------|
-| `bootstrap/.env` | PROJECT_NAME, ENVIRONMENT, AWS_REGION for state bucket |
-| `environments/dev/terraform.tfvars` | project_name, db_*, repos, toggles |
-
-Keep `PROJECT_NAME` and `ENVIRONMENT` in sync between `bootstrap/.env` and `terraform.tfvars`.
 
 ---
 
