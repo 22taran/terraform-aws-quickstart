@@ -116,7 +116,7 @@ The infrastructure provisions a complete, end-to-end CI/CD pipeline for both fro
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                          SOURCE (VCS)                                   │
-│   GitHub / Bitbucket / GitLab  ──►  CodeStar Connection                │
+│   GitHub / Bitbucket / GitLab  ──►  CodeStar Connection                 │
 └──────────────────────────────┬──────────────────────────────────────────┘
                                │
               ┌────────────────┴────────────────┐
@@ -133,13 +133,13 @@ The infrastructure provisions a complete, end-to-end CI/CD pipeline for both fro
 │    └─ CloudFront         │     │  Build steps:                        │
 │       invalidation       │     │    ├─ Docker build                   │
 │                          │     │    ├─ Push to ECR                    │
-│                          │     │    └─ Generate imagedefinitions.json  │
+│                          │     │    └─ Generate imagedefinitions.json │
 └──────────────────────────┘     └──────────────────────────────────────┘
               │                                 │
               ▼                                 ▼
 ┌──────────────────────────┐     ┌──────────────────────────────────────┐
-│   S3  ──►  CloudFront    │     │   ECR  ──►  ECS Fargate (Fargate)   │
-│   (Static SPA)           │     │   (Containerized API)               │
+│   S3  ──►  CloudFront    │     │   ECR  ──►  ECS Fargate (Fargate)    │
+│   (Static SPA)           │     │   (Containerized API)                │
 └──────────────────────────┘     └──────────────────────────────────────┘
 ```
 

@@ -8,6 +8,7 @@ phases:
     commands:
       - cd frontend
       - npm ci
+      - npm test
       - |
         [ -n "$VITE_API_URL" ] && export VITE_API_URL
         [ -n "$VITE_COGNITO_USER_POOL_ID" ] && export VITE_COGNITO_USER_POOL_ID

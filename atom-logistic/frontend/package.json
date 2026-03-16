@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "amazon-cognito-identity-js": "^6.3.12",
@@ -15,7 +17,11 @@
     "react-router-dom": "^6.21.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^14.1.2",
     "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.10"
+    "jsdom": "^23.0.1",
+    "vite": "^5.0.10",
+    "vitest": "^1.2.2"
   }
 }
