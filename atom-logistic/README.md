@@ -55,6 +55,20 @@ npm install
 npm run dev
 ```
 
+### Running tests
+
+```bash
+# Backend (Jest)
+cd backend
+npm test
+
+# Frontend (Vitest)
+cd frontend
+npm test
+```
+
+Tests run automatically in CI/CD (CodeBuild) before build. Pipelines fail if tests fail.
+
 ### Database setup
 
 Run the schema on your RDS/PostgreSQL:
